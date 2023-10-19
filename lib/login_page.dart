@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Forgotpass.dart';
+import 'user_model.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -42,16 +43,16 @@ class _LoginPageState extends State<LoginPage> {
       var response = await http.post(Uri.parse(login),
           headers: {"Content-Type": "application/json"},
           body: jsonEncode(reqBody));
-
       var jsonResponse = jsonDecode(response.body);
 
       if (jsonResponse['status']) {
         // var myToken = jsonResponse['token'];
         // prefs.setString('token', myToken);
+        
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => Homepage(emailController.text)));
+                builder: (context) => Homepage(jsonResponse['name'], emailController.text, jsonResponse['phone_no'], passwordController.text)));
       } else {
         print('Something went wrong');
       }

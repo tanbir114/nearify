@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/user_model.dart';
 import 'notifications.dart';
 import 'notification_model.dart';
 import 'message_model.dart';
@@ -9,11 +10,21 @@ import 'dart:async';
 import 'current_location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'config.dart';
+import 'userProfile.dart';
 
 class Homepage extends StatefulWidget {
-  Homepage(this.userEmail, {super.key});
+  Homepage(
+    this.userName,
+    this.userEmail,
+    this.userPhone,
+    this.userPassword, {
+    Key? key,
+  }) : super(key: key);
 
-  String? userEmail;
+  final String? userEmail;
+  final String? userName;
+  final String? userPhone;
+  final String? userPassword;
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -25,21 +36,30 @@ class _HomepageState extends State<Homepage> {
   int _currentIndex = 0;
   Timer? timer;
 
-  final tabs = [
+  var tabs = [
     const FrontPage(),
-    Notifications('Notifications', notification_model.notification_list,
-        message_model.message_list),
+    Notifications(
+      'Notifications',
+      notification_model.notification_list,
+      message_model.message_list,
+    ),
     const Center(
       child: Text('Saved'),
     ),
-    const Center(
-      child: Text('Search'),
-    ),
+    UserProfile(),
   ];
+
+  void okre() {}
 
   @override
   void initState() {
     super.initState();
+
+    userName = widget.userName;
+    userPhone = widget.userPhone;
+    userEmail = widget.userEmail;
+    userPassword = widget.userPassword;
+
     timer = Timer.periodic(const Duration(seconds: 5), (Timer t) async {
       Position position =
           await CurrentLocation(); // Make sure CurrentLocation is properly imported.
@@ -47,13 +67,15 @@ class _HomepageState extends State<Homepage> {
       print(position.longitude);
 
       var regBody = {
-        "email": widget.userEmail,
+        "email": widget.userEmail!,
         "latitude": position.latitude,
-        "longitude": position.longitude
+        "longitude": position.longitude,
       };
-      var response = await http.post(Uri.parse(location),
-          headers: {"Content-type": "application/json"},
-          body: jsonEncode(regBody));
+      var response = await http.post(
+        Uri.parse(location),
+        headers: {"Content-type": "application/json"},
+        body: jsonEncode(regBody),
+      );
 
       print('Timer ticked');
     });

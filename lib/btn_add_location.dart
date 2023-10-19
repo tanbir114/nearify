@@ -73,7 +73,6 @@ class _BtnAddLocationState extends State<BtnAddLocation> {
                         ],
                       ),
                     ),
-                    
                     Image.asset(
                       'assets/images/map.png',
                       scale: 0.9,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:frontend/categoryscreen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'config.dart';
@@ -104,6 +105,8 @@ class _SignUpState extends State<SignUp> {
             context,
             MaterialPageRoute(builder: (context) => LoginPage()),
             (route) => false);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => CategoryScreen(emailController.text)));
       } else {
         print("Something went wrong");
       }
@@ -261,7 +264,7 @@ class _SignUpState extends State<SignUp> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text(
-                                'Sign in',
+                                'Sign Up',
                                 style: TextStyle(
                                     color: Color.fromARGB(255, 71, 152, 60),
                                     fontSize: 24,
