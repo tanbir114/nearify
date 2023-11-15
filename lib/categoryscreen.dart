@@ -78,7 +78,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
             style: ElevatedButton.styleFrom(
               primary: Colors.greenAccent,
             ),
-            child: SizedBox(
+            child: const SizedBox(
               width: double
                   .infinity, // Expands the width of the button to the maximum available width
               height: 60, // Sets the height of the button to 60 logical pixels

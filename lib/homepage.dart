@@ -11,9 +11,12 @@ import 'current_location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'config.dart';
 import 'userProfile.dart';
+import 'package:frontend/categorychatscreen.dart';
+import 'package:frontend/user_model.dart';
+import 'package:provider/provider.dart';
 
 class Homepage extends StatefulWidget {
-  Homepage(
+  const Homepage(
     this.userName,
     this.userEmail,
     this.userPhone,
@@ -36,8 +39,12 @@ class _HomepageState extends State<Homepage> {
   int _currentIndex = 0;
   Timer? timer;
 
+  Map<String, dynamic> updatedjsonDataMap = {};
+
   var tabs = [
-    const FrontPage(),
+    // const FrontPage(),
+    CategoryChatScreen(),
+    // OnlinePage(),
     Notifications(
       'Notifications',
       notification_model.notification_list,
@@ -48,8 +55,6 @@ class _HomepageState extends State<Homepage> {
     ),
     UserProfile(),
   ];
-
-  void okre() {}
 
   @override
   void initState() {
@@ -63,21 +68,34 @@ class _HomepageState extends State<Homepage> {
     timer = Timer.periodic(const Duration(seconds: 5), (Timer t) async {
       Position position =
           await CurrentLocation(); // Make sure CurrentLocation is properly imported.
-      print(position.latitude);
-      print(position.longitude);
+      // print(position.latitude);
+      // print(position.longitude);
 
       var regBody = {
         "email": widget.userEmail!,
         "latitude": position.latitude,
         "longitude": position.longitude,
       };
-      var response = await http.post(
+
+      await http.post(
         Uri.parse(location),
         headers: {"Content-type": "application/json"},
         body: jsonEncode(regBody),
       );
 
-      print('Timer ticked');
+      final response = await http.post(
+        Uri.parse(nearbyusers),
+        headers: {"Content-type": "application/json"},
+        body: jsonEncode(regBody),
+      );
+
+      updatedjsonDataMap = json.decode(response.body);
+      context
+          .read<DataProvider>()
+          .changeJsonDataMap(newjsonDataMap: updatedjsonDataMap);
+
+      // print(response.body);
+      // print('Timer ticked');
     });
   }
 
@@ -92,7 +110,7 @@ class _HomepageState extends State<Homepage> {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Color(0xFFF9F9F9),
-        body: tabs[_currentIndex],
+        body: tabs[_currentIndex], // Pass jsonDataMap here
         bottomNavigationBar: SizedBox(
           height: 72,
           child: BottomNavigationBar(

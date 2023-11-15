@@ -35,12 +35,12 @@ class _CategoryGridItemState extends State<CategoryGridItem> {
                 Image.asset(widget.category.img, height: 100, width: 100),
                 Text(
                   widget.category.title,
-                  style: TextStyle(color: Colors.black, fontSize: 18),
+                  style: const TextStyle(color: Colors.black, fontSize: 18),
                 ),
               ],
             ),
             _isSelected
-                ? Positioned(
+                ? const Positioned(
                     top: 8,
                     right: 8,
                     child: Icon(
@@ -49,7 +49,7 @@ class _CategoryGridItemState extends State<CategoryGridItem> {
                       size: 32,
                     ),
                   )
-                : SizedBox(),
+                : const SizedBox(),
           ],
         ),
       ),
