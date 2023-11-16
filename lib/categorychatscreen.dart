@@ -5,6 +5,7 @@ import 'package:frontend/user_model.dart';
 import 'package:provider/provider.dart';
 
 class CategoryChatScreen extends StatefulWidget {
+  CategoryChatScreen({Key? key}) : super(key: key);
   @override
   _CategoryChatScreenState createState() => _CategoryChatScreenState();
 }

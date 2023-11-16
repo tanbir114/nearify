@@ -5,7 +5,7 @@ class CategoryGridItem extends StatefulWidget {
   final Category category;
   final Function(bool) onSelectChanged;
 
-  CategoryGridItem({required this.category, required this.onSelectChanged});
+  CategoryGridItem({Key? key,required this.category, required this.onSelectChanged}): super(key: key);
 
   @override
   _CategoryGridItemState createState() => _CategoryGridItemState();

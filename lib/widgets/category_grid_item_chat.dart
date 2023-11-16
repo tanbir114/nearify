@@ -10,10 +10,11 @@ class CategoryGridItemChat extends StatefulWidget {
   final int available;
 
   CategoryGridItemChat({
+    Key? key,
     required this.category,
     required this.onSelectChanged,
     required this.available
-  });
+  }): super(key: key);
 
   @override
   _CategoryGridItemChatState createState() => _CategoryGridItemChatState();

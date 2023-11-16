@@ -83,8 +83,8 @@ class _SignUpState extends State<SignUp> {
         !_isNotValidateusername) {
       Position position = await CurrentLocation();
 
-      print(position.latitude);
-      print(position.longitude);
+      // print(position.latitude);
+      // print(position.longitude);
 
       var regBody = {
         "name": usernameController.text,
@@ -106,7 +106,9 @@ class _SignUpState extends State<SignUp> {
             MaterialPageRoute(builder: (context) => LoginPage()),
             (route) => false);
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => CategoryScreen(emailController.text)));
+            context,
+            MaterialPageRoute(
+                builder: (context) => CategoryScreen(userEmail: emailController.text)));
       } else {
         print("Something went wrong");
       }

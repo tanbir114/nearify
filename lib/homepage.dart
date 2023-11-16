@@ -20,7 +20,8 @@ class Homepage extends StatefulWidget {
     this.userName,
     this.userEmail,
     this.userPhone,
-    this.userPassword, {
+    this.userPassword,
+    this.userId, {
     Key? key,
   }) : super(key: key);
 
@@ -28,6 +29,7 @@ class Homepage extends StatefulWidget {
   final String? userName;
   final String? userPhone;
   final String? userPassword;
+  final String? userId;
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -64,10 +66,10 @@ class _HomepageState extends State<Homepage> {
     userPhone = widget.userPhone;
     userEmail = widget.userEmail;
     userPassword = widget.userPassword;
+    userId = widget.userId;
 
     timer = Timer.periodic(const Duration(seconds: 5), (Timer t) async {
-      Position position =
-          await CurrentLocation(); // Make sure CurrentLocation is properly imported.
+      Position position = await CurrentLocation();
       // print(position.latitude);
       // print(position.longitude);
 
@@ -76,7 +78,7 @@ class _HomepageState extends State<Homepage> {
         "latitude": position.latitude,
         "longitude": position.longitude,
       };
-
+      
       await http.post(
         Uri.parse(location),
         headers: {"Content-type": "application/json"},

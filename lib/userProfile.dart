@@ -105,7 +105,7 @@ class _UserProfile extends State<UserProfile> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => CategoryScreen(userEmail)),
+                              builder: (context) => CategoryScreen(userEmail: userEmail)),
                         );
                       }),
                   ProfileMenuWidget(

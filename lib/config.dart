@@ -10,9 +10,11 @@
 
 // import 'package:mongo_dart/mongo_dart.dart';
 
-const url = "http://192.168.1.105:7000/";
+const url = "http://192.168.0.245:7000/";
 const registration = url + "registration";
 const login = url + "login";
 const location = url + "locationupdate";
 const tagUpdate = url + "tagUpdate";
 const nearbyusers = url + "nearbyusers";
+const sentMessage = url + "sentMessage";
+const oldMessage = url + "oldMessage";

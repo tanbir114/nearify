@@ -4,6 +4,7 @@ String? userEmail = '';
 String? userName = '';
 String? userPhone = '';
 String? userPassword = '';
+String? userId = '';
 
 class DataProvider extends ChangeNotifier {
   Map<String, dynamic>? jsonDataMap;
@@ -16,7 +17,7 @@ class DataProvider extends ChangeNotifier {
     if (newjsonDataMap != null && newjsonDataMap.containsKey('users')) {
       final users = newjsonDataMap['users'];
       jsonDataMap = newjsonDataMap;
-      print(jsonDataMap);
+      // print(jsonDataMap);
       for (var user in users) {
         if (user['tagArray'] is List) {
           List<dynamic> tags = user['tagArray'];

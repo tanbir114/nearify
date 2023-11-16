@@ -20,7 +20,7 @@ class Notifications extends StatefulWidget {
 class _NotificationsState extends State<Notifications> {
   @override
   Widget build(BuildContext context) {
-    print(screen_no);
+    // print(screen_no);
     return screen_no == 0
         ? Scaffold(
             backgroundColor: const Color(0xFFF9F9F9),

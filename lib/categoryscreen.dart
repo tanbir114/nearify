@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'config.dart';
 
 class CategoryScreen extends StatefulWidget {
-  CategoryScreen(this.userEmail, {super.key});
+  CategoryScreen({Key? key, this.userEmail}) : super(key: key);
   String? userEmail;
   @override
   _CategoryScreenState createState() => _CategoryScreenState();
@@ -27,7 +27,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           body: jsonEncode(regBody));
 
       var jsonResponse = jsonDecode(response.body);
-      print(jsonResponse);
+      // print(jsonResponse);
       Navigator.pop(context);
     } catch (e) {
       print(e);
