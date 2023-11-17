@@ -3,7 +3,7 @@ import 'package:frontend/user_model.dart';
 import 'notifications.dart';
 import 'notification_model.dart';
 import 'message_model.dart';
-import 'frontpage.dart';
+// import 'frontpage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -12,7 +12,7 @@ import 'package:geolocator/geolocator.dart';
 import 'config.dart';
 import 'userProfile.dart';
 import 'package:frontend/categorychatscreen.dart';
-import 'package:frontend/user_model.dart';
+// import 'package:frontend/user_model.dart';
 import 'package:provider/provider.dart';
 
 class Homepage extends StatefulWidget {

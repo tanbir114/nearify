@@ -18,3 +18,4 @@ const tagUpdate = url + "tagUpdate";
 const nearbyusers = url + "nearbyusers";
 const sentMessage = url + "sentMessage";
 const oldMessage = url + "oldMessage";
+const addImage = url + "addImage";

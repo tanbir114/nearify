@@ -1,7 +1,11 @@
-// import 'package:camera/camera.dart';
+import 'package:camera/camera.dart';
+import 'package:frontend/CustomUI/OwnFileCard.dart';
 // import 'package:frontend/CustomUI/CameraUI.dart';
 import 'package:frontend/CustomUI/OwnMessageCard.dart';
 import 'package:frontend/CustomUI/ReplyCard.dart';
+import 'package:frontend/CustomUI/ReplyFileCard.dart';
+import 'package:frontend/Screens/CameraScreen.dart';
+import 'package:frontend/Screens/CameraView.dart';
 import 'package:frontend/models/ChatModel.dart';
 import 'package:frontend/models/MessageModel.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -13,6 +17,7 @@ import 'package:frontend/config.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:frontend/config.dart';
+import 'package:image_picker/image_picker.dart';
 
 class IndividualPage extends StatefulWidget {
   final String id;
@@ -36,6 +41,9 @@ class _IndividualPageState extends State<IndividualPage> {
   TextEditingController _controller = TextEditingController();
   ScrollController _scrollController = ScrollController();
   late IO.Socket socket;
+  ImagePicker _picker = ImagePicker();
+  XFile? file;
+  var popTime = 0;
 
   @override
   void initState() {
@@ -67,12 +75,11 @@ class _IndividualPageState extends State<IndividualPage> {
       final String? type = message['type'];
       String? messageContent = message['message'];
       String? time = message['time'];
+      String? path = message['path'];
       if (messageContent != null && type != null) {
-        MessageModel messageModel =
-            MessageModel(type: type, message: messageContent, time: time);
-        setState(() {
-          messages.add(messageModel);
-        });
+        setMessage(type, messageContent, time, path);
+        _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 0), curve: Curves.easeOut);
       }
     }
   }
@@ -89,7 +96,7 @@ class _IndividualPageState extends State<IndividualPage> {
       socket.emit("signin", userId);
       socket.on("message", (msg) {
         var time = DateTime.now().toString().substring(10, 16);
-        setMessage("destination", msg["message"], time);
+        setMessage("destination", msg["message"], time, msg["path"]);
         if (_scrollController.positions.length > 0 &&
             _scrollController.position.extentAfter == 0.0)
           _scrollController.animateTo(
@@ -100,28 +107,76 @@ class _IndividualPageState extends State<IndividualPage> {
     });
   }
 
-  void sendMessage(String message, String sourceId, String targetId) async {
+  void sendMessage(
+      String message, String sourceId, String targetId, String path) async {
     var time = DateTime.now().toString().substring(10, 16);
-    setMessage("source", message, time);
+
+    setMessage("source", message, time, path);
+    socket.emit("message", {
+      "message": message,
+      "sourceId": sourceId,
+      "targetId": targetId,
+      "path": path
+    });
+
     var reqBody = {
       "message": message,
       "sourceId": userId,
       "targetId": widget.id,
       "type": "source",
-      "time": time
+      "time": time,
+      "path": path
     };
-    var response = await http.post(Uri.parse(sentMessage),
+    await http.post(Uri.parse(sentMessage),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody));
-    var jsonResponse = jsonDecode(response.body);
-
-    socket.emit("message",
-        {"message": message, "sourceId": sourceId, "targetId": targetId});
+    // var jsonResponse = jsonDecode(response.body);
   }
 
-  void setMessage(String type, String message, time) async {
+  void onImageSend(String path, String message) async {
+    for (int i = 0; i < popTime; i++) {
+      Navigator.pop(context);
+    }
+    setState(() {
+      popTime = 0;
+    });
+
+    var request = http.MultipartRequest("POST", Uri.parse(addImage));
+    request.files.add(await http.MultipartFile.fromPath('img', path));
+    request.headers.addAll({'Content-Type': 'multipart/form-data'});
+    http.StreamedResponse response = await request.send();
+
+    var httpResponse = await http.Response.fromStream(response);
+    var data = json.decode(httpResponse.body);
+
+    var time = DateTime.now().toString().substring(10, 16);
+
+    setMessage("source", message, time, path);
+
+    socket.emit("message", {
+      "message": message,
+      "sourceId": "{$userId}",
+      "targetId": widget.id,
+      "path": data['path'],
+    });
+
+    var reqBody = {
+      "message": message,
+      "sourceId": userId,
+      "targetId": widget.id,
+      "type": "source",
+      "time": time,
+      "src_path": path,
+      "dest_path": data['path']
+    };
+    await http.post(Uri.parse(sentMessage),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(reqBody));
+  }
+
+  void setMessage(String type, String message, time, path) async {
     MessageModel messageModel =
-        MessageModel(type: type, message: message, time: time);
+        MessageModel(type: type, message: message, time: time, path: path);
 
     setState(() {
       messages.add(messageModel);
@@ -130,7 +185,6 @@ class _IndividualPageState extends State<IndividualPage> {
 
   @override
   void dispose() {
-    print("Disposed: $_IndividualPageState");
     socket.disconnect();
     socket.onDisconnect((_) => print('Disconnected'));
     super.dispose();
@@ -197,11 +251,24 @@ class _IndividualPageState extends State<IndividualPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const Text(
-                        "last seen today at 12:05",
-                        style: TextStyle(
-                          fontSize: 13,
-                        ),
+                      Row(
+                        children: [
+                          Container(
+                            width: 7,
+                            height: 7,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.green,
+                            ),
+                            margin: const EdgeInsets.only(right: 5),
+                          ),
+                          const Text(
+                            "Online",
+                            style: TextStyle(
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
                       )
                     ],
                   ),
@@ -212,9 +279,7 @@ class _IndividualPageState extends State<IndividualPage> {
                 IconButton(icon: const Icon(Icons.call), onPressed: () {}),
                 PopupMenuButton<String>(
                   padding: const EdgeInsets.all(0),
-                  onSelected: (value) {
-                    // print(value);
-                  },
+                  onSelected: (value) {},
                   itemBuilder: (BuildContext contesxt) {
                     return [
                       const PopupMenuItem(
@@ -257,6 +322,7 @@ class _IndividualPageState extends State<IndividualPage> {
                   Expanded(
                     // height: MediaQuery.of(context).size.height - 150,
                     child: ListView.builder(
+                      // reverse: true,
                       shrinkWrap: true,
                       controller: _scrollController,
                       itemCount: messages.length + 1,
@@ -267,18 +333,33 @@ class _IndividualPageState extends State<IndividualPage> {
                           );
                         }
                         if (messages[index].type == "source") {
-                          return OwnMessageCard(
-                            message: "${messages[index].message}",
-                            time: "${messages[index].time}",
-                          );
+                          if (messages[index].path != "" &&
+                              messages[index].path != null) {
+                            return OwnFileCard(
+                              path: "${messages[index].path}",
+                              message: "${messages[index].message}",
+                              time: "${messages[index].time}",
+                            );
+                          } else {
+                            return OwnMessageCard(
+                              message: "${messages[index].message}",
+                              time: "${messages[index].time}",
+                            );
+                          }
                         } else {
-                          // if(index%2 == 0)
-                          // {
-                          return ReplyCard(
-                            message: "${messages[index].message}",
-                            time: "${messages[index].time}",
-                          );
-                          // }
+                          if (messages[index].path != "" &&
+                              messages[index].path != null) {
+                            return ReplyFileCard(
+                              path: "${messages[index].path}",
+                              message: "${messages[index].message}",
+                              time: "${messages[index].time}",
+                            );
+                          } else {
+                            return ReplyCard(
+                              message: "${messages[index].message}",
+                              time: "${messages[index].time}",
+                            );
+                          }
                         }
                       },
                     ),
@@ -356,11 +437,18 @@ class _IndividualPageState extends State<IndividualPage> {
                                           IconButton(
                                             icon: const Icon(Icons.camera_alt),
                                             onPressed: () {
-                                              // Navigator.push(
-                                              //     context,
-                                              //     MaterialPageRoute(
-                                              //         builder: (builder) =>
-                                              //             CameraApp()));
+                                              setState(() {
+                                                popTime = 2;
+                                              });
+
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (builder) =>
+                                                          CameraScreen(
+                                                            onImageSend:
+                                                                onImageSend,
+                                                          )));
                                             },
                                           ),
                                         ],
@@ -393,7 +481,7 @@ class _IndividualPageState extends State<IndividualPage> {
                                                 milliseconds: 300),
                                             curve: Curves.easeOut);
                                         sendMessage(_controller.text,
-                                            "{$userId}", widget.id);
+                                            "{$userId}", widget.id, "");
                                         _controller.clear();
                                         setState(() {
                                           sendButton = false;
@@ -443,16 +531,40 @@ class _IndividualPageState extends State<IndividualPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  iconCreation(
-                      Icons.insert_drive_file, Colors.indigo, "Document"),
+                  iconCreation(Icons.insert_drive_file, Colors.indigo,
+                      "Document", () {}),
                   const SizedBox(
                     width: 40,
                   ),
-                  iconCreation(Icons.camera_alt, Colors.pink, "Camera"),
+                  iconCreation(Icons.camera_alt, Colors.pink, "Camera", () {
+                    setState(() {
+                      popTime = 2;
+                    });
+
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (builder) => CameraScreen(
+                                  onImageSend: onImageSend,
+                                )));
+                  }),
                   const SizedBox(
                     width: 40,
                   ),
-                  iconCreation(Icons.insert_photo, Colors.purple, "Gallery"),
+                  iconCreation(Icons.insert_photo, Colors.purple, "Gallery",
+                      () async {
+                    setState(() {
+                      popTime = 2;
+                    });
+                    file = await _picker.pickImage(source: ImageSource.gallery);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (builder) => CameraViewPage(
+                                  path: file!.path,
+                                  onImageSend: onImageSend,
+                                )));
+                  }),
                 ],
               ),
               const SizedBox(
@@ -461,15 +573,16 @@ class _IndividualPageState extends State<IndividualPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  iconCreation(Icons.headset, Colors.orange, "Audio"),
+                  iconCreation(Icons.headset, Colors.orange, "Audio", () {}),
                   const SizedBox(
                     width: 40,
                   ),
-                  iconCreation(Icons.location_pin, Colors.teal, "Location"),
+                  iconCreation(
+                      Icons.location_pin, Colors.teal, "Location", () {}),
                   const SizedBox(
                     width: 40,
                   ),
-                  iconCreation(Icons.person, Colors.blue, "Contact"),
+                  iconCreation(Icons.person, Colors.blue, "Contact", () {}),
                 ],
               ),
             ],
@@ -479,9 +592,10 @@ class _IndividualPageState extends State<IndividualPage> {
     );
   }
 
-  Widget iconCreation(IconData icons, Color color, String text) {
+  Widget iconCreation(
+      IconData icons, Color color, String text, Function() onTap) {
     return InkWell(
-      onTap: () {},
+      onTap: onTap,
       child: Column(
         children: [
           CircleAvatar(
@@ -515,7 +629,6 @@ class _IndividualPageState extends State<IndividualPage> {
           columns: 7,
         ),
         onEmojiSelected: (emoji, category) {
-          // print(emoji);
           setState(() {
             _controller.text = '${_controller.text}$emoji';
           });

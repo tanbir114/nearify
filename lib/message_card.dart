@@ -72,7 +72,7 @@ class _MessageCardState extends State<MessageCard> {
                         ),
                         child: widget.message.messageCount <2
                             ? Text(
-                                widget.message.message[0]!,
+                                widget.message.message[0],
                                 style: const TextStyle(
                                   color: Color.fromARGB(255, 127, 135, 147),
                                   fontFamily: 'DM Sans',

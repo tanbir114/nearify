@@ -2,8 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class CameraViewPage extends StatelessWidget {
-  CameraViewPage({Key? key, required this.path}) : super(key: key);
+  CameraViewPage({Key? key, required this.path, required this.onImageSend})
+      : super(key: key);
   final String path;
+  final Function onImageSend;
+  static TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -13,25 +16,25 @@ class CameraViewPage extends StatelessWidget {
         backgroundColor: Colors.black,
         actions: [
           IconButton(
-              icon:const Icon(
+              icon: const Icon(
                 Icons.crop_rotate,
                 size: 27,
               ),
               onPressed: () {}),
           IconButton(
-              icon:const Icon(
+              icon: const Icon(
                 Icons.emoji_emotions_outlined,
                 size: 27,
               ),
               onPressed: () {}),
           IconButton(
-              icon:const Icon(
+              icon: const Icon(
                 Icons.title,
                 size: 27,
               ),
               onPressed: () {}),
           IconButton(
-              icon:const Icon(
+              icon: const Icon(
                 Icons.edit,
                 size: 27,
               ),
@@ -58,6 +61,7 @@ class CameraViewPage extends StatelessWidget {
                 width: MediaQuery.of(context).size.width,
                 padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
                 child: TextFormField(
+                  controller: _controller,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 17,
@@ -76,13 +80,21 @@ class CameraViewPage extends StatelessWidget {
                         color: Colors.white,
                         fontSize: 17,
                       ),
-                      suffixIcon: CircleAvatar(
-                        radius: 27,
-                        backgroundColor: Colors.tealAccent[700],
-                        child: const Icon(
-                          Icons.check,
-                          color: Colors.white,
-                          size: 27,
+                      suffixIcon: InkWell(
+                        onTap: () {
+                          onImageSend(
+                            path,
+                            _controller.text.trim()
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 27,
+                          backgroundColor: Colors.tealAccent[700],
+                          child: const Icon(
+                            Icons.check,
+                            color: Colors.white,
+                            size: 27,
+                          ),
                         ),
                       )),
                 ),

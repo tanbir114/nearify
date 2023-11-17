@@ -16,10 +16,11 @@ Future<void> initCamera() async {
 }
 
 class CameraScreen extends StatefulWidget {
-  const CameraScreen({Key? key}) : super(key: key);
+  const CameraScreen({Key? key, required this.onImageSend}) : super(key: key);
 
   @override
   _CameraScreenState createState() => _CameraScreenState();
+  final Function onImageSend;
 }
 
 class _CameraScreenState extends State<CameraScreen> {
@@ -190,6 +191,7 @@ class _CameraScreenState extends State<CameraScreen> {
         MaterialPageRoute(
             builder: (builder) => CameraViewPage(
                   path: file.path,
+                  onImageSend: widget.onImageSend,
                 )));
   }
 }

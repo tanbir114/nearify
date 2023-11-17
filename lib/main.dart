@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:frontend/user_model.dart';
 
 final theme = ThemeData(
-  useMaterial3: true,
+  // useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
     brightness: Brightness.dark,
     seedColor: const Color.fromARGB(255, 131, 57, 0),
