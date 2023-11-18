@@ -1,12 +1,10 @@
 // ignore_for_file: avoid_print
 
 import 'package:camera/camera.dart';
-import 'package:flutter/gestures.dart';
 import 'package:frontend/CustomUI/OwnFileCard.dart';
-// import 'package:frontend/CustomUI/CameraUI.dart';
 import 'package:frontend/CustomUI/OwnMessageCard.dart';
-import 'package:frontend/CustomUI/ReplyCard.dart';
 import 'package:frontend/CustomUI/ReplyFileCard.dart';
+import 'package:frontend/CustomUI/ReplyGroupCard.dart';
 import 'package:frontend/Screens/CameraScreen.dart';
 import 'package:frontend/Screens/CameraView.dart';
 import 'package:frontend/models/MessageModel.dart';
@@ -20,21 +18,18 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 
-class IndividualPage extends StatefulWidget {
-  final String id;
+class GroupScreen extends StatefulWidget {
   final String name;
-  const IndividualPage({Key? key, required this.id, required this.name
-      // required this.chatModel, required this.sourchat
-      })
+  final List<dynamic> onlineGridItemIds;
+  const GroupScreen(
+      {Key? key, required this.name, required this.onlineGridItemIds})
       : super(key: key);
-  // final ChatModel chatModel;
-  // final ChatModel sourchat;
 
   @override
-  _IndividualPageState createState() => _IndividualPageState();
+  _GroupScreenState createState() => _GroupScreenState();
 }
 
-class _IndividualPageState extends State<IndividualPage> {
+class _GroupScreenState extends State<GroupScreen> {
   bool show = false;
   FocusNode focusNode = FocusNode();
   bool sendButton = false;
@@ -49,6 +44,7 @@ class _IndividualPageState extends State<IndividualPage> {
   @override
   void initState() {
     super.initState();
+
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
         setState(() {
@@ -63,21 +59,30 @@ class _IndividualPageState extends State<IndividualPage> {
 
   void fetchOldMsg() async {
     var reqBody = {
-      "sourceId": userId,
-      "targetId": widget.id,
+      "groupId": widget.name,
     };
-    var response = await http.post(Uri.parse(oldMessage),
+    var response = await http.post(Uri.parse(oldGroupMessage),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody));
     final Map<String, dynamic> data = jsonDecode(response.body);
-    final List<dynamic> msgList = data['msg']['messages'];
+    final List<dynamic> msgList = data['msg'];
     for (Map<String, dynamic> message in msgList) {
-      final String? type = message['type'];
+      String? type;
       String? messageContent = message['message'];
       String? time = message['time'];
-      String? path = message['path'];
-      if (messageContent != null && type != null) {
-        setMessage(type, messageContent, time, path);
+      String? path;
+      String? senderId = message['userId'];
+      String? senderName = message['senderName'];
+      if (userId != senderId) {
+        type = "destination";
+        path = message['dest_path'];
+      } else {
+        type = "source";
+        path = message['src_path'];
+      }
+      // String?
+      if (messageContent != null) {
+        setMessage(type, messageContent, time, path, senderName);
         _scrollController.animateTo(_scrollController.position.maxScrollExtent,
             duration: const Duration(milliseconds: 0), curve: Curves.easeOut);
       }
@@ -85,18 +90,21 @@ class _IndividualPageState extends State<IndividualPage> {
   }
 
   void connect() {
-    socket = IO.io("${url}", <String, dynamic>{
+    socket = IO.io(url, <String, dynamic>{
       "transports": ["websocket"],
       "autoConnect": false,
     });
+    // ignore: avoid_print
     socket.onDisconnect((_) => print('Disconnected'));
     socket.connect();
     socket.onConnect((data) {
-      print("Connected");
-      socket.emit("signin", userId);
-      socket.on("message", (msg) {
+      socket.emit("joinGroup", widget.name);
+      socket.on("grpmessage", (msg) {
         var time = DateTime.now().toString().substring(10, 16);
-        setMessage("destination", msg["message"], time, msg["path"]);
+        if (msg["sourceId"] != userId) {
+          setMessage("destination", msg["message"], time, msg["path"],
+              msg["senderName"]);
+        }
         if (_scrollController.positions.isNotEmpty &&
             _scrollController.position.extentAfter == 0.0) {
           _scrollController.animateTo(
@@ -112,23 +120,25 @@ class _IndividualPageState extends State<IndividualPage> {
       String message, String sourceId, String targetId, String path) async {
     var time = DateTime.now().toString().substring(10, 16);
 
-    setMessage("source", message, time, path);
-    socket.emit("message", {
+    setMessage("source", message, time, path, userName);
+    socket.emit("grpmessage", {
+      "groupId": widget.name,
       "message": message,
-      "sourceId": sourceId,
-      "targetId": targetId,
-      "path": path
+      "sourceId": userId,
+      "path": path,
+      "senderName": userName,
     });
 
     var reqBody = {
       "message": message,
-      "sourceId": userId,
-      "targetId": widget.id,
-      "type": "source",
+      "userId": userId,
+      "groupId": widget.name,
       "time": time,
-      "path": path
+      "src_path": path,
+      "dest_path": path,
+      "senderName": userName,
     };
-    await http.post(Uri.parse(sentMessage),
+    await http.post(Uri.parse(sentGroupMessage),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody));
     // var jsonResponse = jsonDecode(response.body);
@@ -152,35 +162,38 @@ class _IndividualPageState extends State<IndividualPage> {
 
     var time = DateTime.now().toString().substring(10, 16);
 
-    setMessage("source", message, time, path);
+    setMessage("source", message, time, path, userName);
 
-    socket.emit("message", {
+    socket.emit("grpmessage", {
       "message": message,
-      "sourceId": "{$userId}",
-      "targetId": widget.id,
+      "sourceId": userId,
+      "targetId": widget.name,
       "path": data['path'],
+      "senderName": userName,
+      "groupId": widget.name,
     });
 
     var reqBody = {
       "message": message,
-      "sourceId": userId,
-      "targetId": widget.id,
-      "type": "source",
+      "userId": userId,
+      "groupId": widget.name,
       "time": time,
       "src_path": path,
-      "dest_path": data['path']
+      "dest_path": data['path'],
+      "senderName": userName,
     };
-    await http.post(Uri.parse(sentMessage),
+
+    await http.post(Uri.parse(sentGroupMessage),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody));
   }
 
-  void setMessage(String type, String message, time, path) async {
-    MessageModel messageModel =
-        MessageModel(type: type, message: message, time: time, path: path);
+  void setMessage(String type, String message, time, path, senderName) async {
+    MessageModel messageModel = MessageModel(
+        type: type, message: message, time: time, path: path, name: senderName);
 
     setState(() {
-      messages.insert(0, messageModel);
+      messages.add(messageModel);
     });
   }
 
@@ -323,9 +336,7 @@ class _IndividualPageState extends State<IndividualPage> {
                   Expanded(
                     // height: MediaQuery.of(context).size.height - 150,
                     child: ListView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      dragStartBehavior: DragStartBehavior.start,
-                      reverse: true,
+                      // reverse: true,
                       shrinkWrap: true,
                       controller: _scrollController,
                       itemCount: messages.length + 1,
@@ -358,7 +369,8 @@ class _IndividualPageState extends State<IndividualPage> {
                               time: "${messages[index].time}",
                             );
                           } else {
-                            return ReplyCard(
+                            return ReplyGroupCard(
+                              senderName: "${messages[index].name}",
                               message: "${messages[index].message}",
                               time: "${messages[index].time}",
                             );
@@ -484,7 +496,7 @@ class _IndividualPageState extends State<IndividualPage> {
                                                 milliseconds: 300),
                                             curve: Curves.easeOut);
                                         sendMessage(_controller.text,
-                                            "{$userId}", widget.id, "");
+                                            "{$userId}", widget.name, "");
                                         _controller.clear();
                                         setState(() {
                                           sendButton = false;

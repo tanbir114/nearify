@@ -9,12 +9,12 @@ class CategoryGridItemChat extends StatefulWidget {
   final Function(bool) onSelectChanged;
   final int available;
 
-  CategoryGridItemChat({
-    Key? key,
-    required this.category,
-    required this.onSelectChanged,
-    required this.available
-  }): super(key: key);
+  CategoryGridItemChat(
+      {Key? key,
+      required this.category,
+      required this.onSelectChanged,
+      required this.available})
+      : super(key: key);
 
   @override
   _CategoryGridItemChatState createState() => _CategoryGridItemChatState();
@@ -58,7 +58,7 @@ class _CategoryGridItemChatState extends State<CategoryGridItemChat> {
                     ),
                   ),
                   Text(
-                    '${widget.available.toString() ?? '0'} available users',
+                    '${widget.available.toString()} available users',
                     style: const TextStyle(
                       fontSize: 12,
                       color: Colors.black,
@@ -73,7 +73,9 @@ class _CategoryGridItemChatState extends State<CategoryGridItemChat> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => OnlinePage()),
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              OnlineScreen(tagName: widget.category.title)),
                     );
                   },
                   icon: const Icon(Icons.arrow_forward),

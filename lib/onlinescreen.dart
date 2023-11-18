@@ -1,17 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/user_model.dart';
+import 'package:frontend/widgets/onlinegroup.dart';
 import 'package:provider/provider.dart';
 import 'widgets/onlinepeople.dart';
 
-class OnlinePage extends StatefulWidget {
-  const OnlinePage({Key? key}) : super(key: key);
+class OnlineScreen extends StatefulWidget {
+  final String tagName;
+  const OnlineScreen({Key? key, required this.tagName}) : super(key: key);
   @override
-  _OnlinePageState createState() => _OnlinePageState();
+  _OnlineScreenState createState() => _OnlineScreenState();
 }
 
-class _OnlinePageState extends State<OnlinePage> {
+class _OnlineScreenState extends State<OnlineScreen> {
+  late String desiredTag;
+
+  @override
+  void initState() {
+    super.initState();
+    desiredTag = widget.tagName;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final List<dynamic> onlineGridItems = context
+        .watch<DataProvider>()
+        .jsonDataMap!['users']
+        .where((profile) =>
+            profile['tagArray'] != null &&
+            (profile['tagArray'] as List).contains(desiredTag))
+        .map((profile) => OnlineGridItem(
+              profile: profile['name'],
+              id: profile['_id'],
+              tags: profile['tagArray'],
+            ))
+        .toList();
+    print(onlineGridItems);
     return Scaffold(
       body: Column(
         children: [
@@ -31,13 +54,8 @@ class _OnlinePageState extends State<OnlinePage> {
                 mainAxisSpacing: 10,
               ),
               children: [
-                for (final profile
-                    in context.watch<DataProvider>().jsonDataMap!['users'])
-                  OnlineGridItem(
-                    profile: profile['name'],
-                    id: profile['_id'],
-                    tags: profile['tagArray'],
-                  ),
+                OnlineGroup(groupName: widget.tagName, profiles: onlineGridItems),
+                ...onlineGridItems,
               ],
             ),
           ),

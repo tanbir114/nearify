@@ -44,9 +44,7 @@ class _HomepageState extends State<Homepage> {
   Map<String, dynamic> updatedjsonDataMap = {};
 
   var tabs = [
-    // const FrontPage(),
     CategoryChatScreen(),
-    // OnlinePage(),
     Notifications(
       'Notifications',
       notification_model.notification_list,

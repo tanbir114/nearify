@@ -42,7 +42,7 @@ class ReplyFileCard extends StatelessWidget {
                       topRight: Radius.circular(15),
                     ),
                     child: Image.network(
-                      "${url}uploads/$path",
+                      "${url}/uploads/$path",
                       fit: BoxFit.cover,
                       width: double.infinity,
                       height: MediaQuery.of(context).size.height / 4,
@@ -87,7 +87,7 @@ class ReplyFileCard extends StatelessWidget {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height / 1.5,
             child: Image.network(
-              "${url}uploads/$path",
+              "${url}/uploads/$path",
               fit: BoxFit.cover,
             ),
           ),

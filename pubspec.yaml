@@ -87,6 +87,7 @@ flutter:
     - assets/images/
     - assets/images/online.png
     - assets/person.svg
+    - assets/groups.svg
     - assets/whatsapp_background.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

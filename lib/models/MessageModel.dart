@@ -5,5 +5,6 @@ class MessageModel {
   String? message;
   String? time;
   String? path;
-  MessageModel({this.message, this.type, this.time,@required this.path});
+  String? name;
+  MessageModel({this.message, this.type, this.time, @required this.path, this.name});
 }
