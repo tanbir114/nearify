@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/data/dummy_data4.dart';
 import 'package:frontend/widgets/category_grid_item_chat.dart';
 import 'package:frontend/data/dummy_data.dart';
 import 'package:frontend/user_model.dart';
@@ -25,26 +26,27 @@ class _CategoryChatScreenState extends State<CategoryChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+        title: Text('Topics',
+        style: TextStyle(
+        color: Colors.amberAccent, fontWeight: FontWeight.w900)),
+    leading: IconButton(
+    icon: Icon(Icons.arrow_back, color: Colors.white,),
+    onPressed: () {
+    Navigator.pop(context);
+    },
+    ),
+          backgroundColor: Color(0xff170746),
+        ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(
-            height: 40,
-          ),
-          const Text(
-            'All Tags',
-            style: TextStyle(fontSize: 28, color: Colors.white),
-          ),
+
+
           Expanded(
-            child: GridView(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                childAspectRatio: 2 / 1,
-                crossAxisSpacing: 50,
-                mainAxisSpacing: 10,
-              ),
+            child: ListView(
               children: [
-                for (final category in availableCategories)
+                for (final category in availableTopics)
                   CategoryGridItemChat(
                       category: category,
                       onSelectChanged: (isSelected) {

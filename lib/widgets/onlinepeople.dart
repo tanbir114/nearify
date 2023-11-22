@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/blankpage.dart';
 // import 'package:frontend/models/category.dart';
 // import 'package:frontend/onlinescreen.dart';
 // import 'package:frontend/models/onlineprofiles.dart';
@@ -14,10 +15,19 @@ class OnlineGridItem extends StatefulWidget {
 }
 
 class _OnlineGridItemState extends State<OnlineGridItem> {
+
+
   @override
   Widget build(BuildContext context) {
-    String tagstring = widget.tags.join(', ');
-    return Container(
+    String tagstring = widget.tags.take(3).join(', ');
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => BlankPage()),
+        );
+      },
+    child: Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
@@ -43,20 +53,30 @@ class _OnlineGridItemState extends State<OnlineGridItem> {
                         fontWeight: FontWeight.w700),
                   ),
                   SizedBox(height: 5, width: 50),
-                  Text(
-                    tagstring,
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w200),
+                  Row(
+                    children: [
+                      Text(
+                        tagstring,
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w200),
+                      ),
+
+                      Text('...',  style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w200))
+                    ],
                   ),
+                  
                 ],
               ),
-              SizedBox(width: 10),
             ],
           ),
         ],
       ),
+    ),
     );
   }
 }

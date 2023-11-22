@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/user_model.dart';
+import 'package:frontend/rootpage.dart';
 
 final theme = ThemeData(
   useMaterial3: true,
@@ -37,7 +38,7 @@ class _MyAppState extends State<MyApp> {
           title: 'Nearify',
           // theme: theme,
 
-          home: LoginPage(),
+          home: rootPage(),
         ));
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/anotherhomepage.dart';
 import 'package:frontend/user_model.dart';
 import 'notifications.dart';
 import 'notification_model.dart';
@@ -43,7 +44,7 @@ class _HomepageState extends State<Homepage> {
 
   var tabs = [
     // const FrontPage(),
-    CategoryChatScreen(),
+    AnotherHomePage(),
     // OnlinePage(),
     Notifications(
       'Notifications',
@@ -109,7 +110,7 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Color(0xFFF9F9F9),
+        backgroundColor: Color(0xFFFFFFFF),
         body: tabs[_currentIndex], // Pass jsonDataMap here
         bottomNavigationBar: SizedBox(
           height: 72,
@@ -120,33 +121,35 @@ class _HomepageState extends State<Homepage> {
               size: 24,
             ),
             selectedIconTheme: const IconThemeData(size: 30),
-            backgroundColor: const Color(0xFFFFFFFF),
+            unselectedItemColor: Colors.white, // Set unselected icon color
+            selectedItemColor: Colors.amber,
+            backgroundColor: const Color(0xff170746),
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
                 label: 'Home',
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.white,
               ),
               BottomNavigationBarItem(
                 icon: Icon(
                   Icons.notifications_rounded,
                 ),
                 label: 'Notification',
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.white,
               ),
               BottomNavigationBarItem(
                 icon: Icon(
                   Icons.favorite,
                 ),
                 label: 'Saved',
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.white,
               ),
               BottomNavigationBarItem(
                 icon: Icon(
                   Icons.person_rounded,
                 ),
                 label: 'Profile',
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.white,
               ),
             ],
             onTap: (index) {

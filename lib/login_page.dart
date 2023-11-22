@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Forgotpass.dart';
+import 'package:frontend/anotherhomepage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,7 +16,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late Color myColor;
+  //late Color myColor;
   late Size mediaSize;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -45,13 +46,21 @@ class _LoginPageState extends State<LoginPage> {
       var jsonResponse = jsonDecode(response.body);
 
       if (jsonResponse['status']) {
-        // var myToken = jsonResponse['token'];
-        // prefs.setString('token', myToken);
-        
-      Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Homepage(jsonResponse['name'], emailController.text, jsonResponse['phone_no'], passwordController.text)));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Homepage(
+              jsonResponse['name'],
+              emailController.text,
+              jsonResponse['phone_no'],
+              passwordController.text,
+            ),
+          ),
+        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => Homepage(userName, userEmail, userPhone, userPassword)),
+        // );
       } else {
         print('Something went wrong');
       }
@@ -60,45 +69,16 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    myColor = Theme.of(context).primaryColor;
-    mediaSize = MediaQuery.of(context).size;
+    //myColor = Theme.of(context).primaryColor;
+    //mediaSize = MediaQuery.of(context).size;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: myColor,
-        image: DecorationImage(
-          image: const AssetImage("assets/images/bg3.png"),
-          fit: BoxFit.cover,
-          colorFilter:
-              ColorFilter.mode(myColor.withOpacity(0.9), BlendMode.dstATop),
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(children: [
-          // Positioned(top: 80, child: _buildTop()),
-          Positioned(bottom: 0, child: _buildBottom()),
-        ]),
-      ),
-    );
-  }
-
-  Widget _buildBottom() {
-    return SingleChildScrollView(
-      child: SizedBox(
-        width: mediaSize.width,
-        // color: Color.fromARGB(0, 198, 201, 14),
-
-        child: Card(
-          color: const Color.fromARGB(188, 254, 255, 181),
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          )),
+    return Scaffold(
+      backgroundColor: Color(0xff170746),
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(32.0),
-            //child: Color.fromARGB(255, 30, 104, 207),
+            padding: const EdgeInsets.only(left: 24.0, right: 24, bottom: 24),
             child: _buildForm(),
           ),
         ),
@@ -107,143 +87,144 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildForm() {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Welcome Back",
-            style: TextStyle(
-                color: Color.fromARGB(255, 30, 104, 207),
-                fontSize: 28,
-                fontWeight: FontWeight.w500),
-          ),
-          //_buildGreyText("Please login with your information"),
-          const Text(
-            "Please login with your information",
-            style: TextStyle(
-                color: Color.fromARGB(255, 8, 93, 68),
-                fontSize: 16,
-                fontWeight: FontWeight.w400),
-          ),
-          const SizedBox(height: 10),
-
-          _buildGreyText("Email"),
-          _buildInputField(emailController),
-          const SizedBox(height: 10),
-          _buildGreyText("Password"),
-          _buildInputField(passwordController, isPassword: true),
-          const SizedBox(height: 10),
-          _buildRememberForgot(),
-          const SizedBox(height: 10),
-          _buildLoginButton(),
-          const SizedBox(height: 10),
-          _buildOtherLogin(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGreyText(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-          color: Color.fromARGB(255, 8, 93, 68),
-          fontSize: 16,
-          fontWeight: FontWeight.w500),
-    );
-  }
-
-  Widget _buildInputField(TextEditingController controller,
-      {isPassword = false}) {
-    return SingleChildScrollView(
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          suffixIcon: isPassword
-              ? const Icon(Icons.remove_red_eye)
-              : const Icon(Icons.done),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 60,
         ),
-        obscureText: isPassword,
+        const Text(
+          "Login!",
+          style: TextStyle(
+            fontSize: 48,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+          ),
+        ),
+        const Text(
+          "Woohoo! Good to see you back\n.. I'm lying",
+          style: TextStyle(
+            color: Color(0xffC3C5FF),
+            fontSize: 16,
+            fontWeight: FontWeight.w300,
+          ),
+        ),
+        const SizedBox(height: 160),
+        _buildTextField("Email", emailController),
+        const SizedBox(height: 15),
+        _buildTextField("Password", passwordController, isPassword: true),
+        const SizedBox(height: 200),
+        _buildRememberForgot(),
+        const SizedBox(height: 10),
+        _buildLoginButton(),
+        const SizedBox(height: 10),
+        //_buildOtherLogin(),
+      ],
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller,
+      {isPassword = false}) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.only(left: 24, top: 20, bottom: 20),
+        labelText: label,
+        suffixIcon: isPassword
+            ? const Icon(Icons.remove_red_eye)
+            : const Icon(Icons.done),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide(
+            color: Colors.white,
+          ),
+        ),
+        filled: true,
+        fillColor: Colors.white,
       ),
+      obscureText: isPassword,
     );
   }
 
   Widget _buildRememberForgot() {
-    return SingleChildScrollView(
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
         Row(
           children: [
             Checkbox(
-                value: rememberUser,
-                onChanged: (value) {
-                  setState(() {
-                    rememberUser = value!;
-                  });
-                }),
-            _buildGreyText("Remember me"),
+              value: rememberUser,
+              onChanged: (value) {
+                setState(() {
+                  rememberUser = value!;
+                });
+              },
+            ),
+            const Text(
+              "Remember me",
+              style: TextStyle(color: Colors.white),
+            ),
           ],
         ),
         TextButton(
           onPressed: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const ForgotPassword()));
+              context,
+              MaterialPageRoute(builder: (context) => const ForgotPassword()),
+            );
           },
           child: const Text(
             "I forgot my password",
             style: TextStyle(
-                color: Color.fromARGB(255, 197, 19, 72),
-                fontSize: 16,
-                fontWeight: FontWeight.w500),
+              color: Colors.yellow,
+              fontSize: 14,
+              fontWeight: FontWeight.w300,
+            ),
           ),
-        )
-      ]),
+        ),
+      ],
     );
   }
 
   Widget _buildLoginButton() {
-    return SingleChildScrollView(
-      child: ElevatedButton(
-        onPressed: () {
-          print("log in pressed");
-          debugPrint("Username : ${emailController.text}");
-          debugPrint("Password : ${passwordController.text}");
-          loginUser();
-        },
-        style: ElevatedButton.styleFrom(
-          shape: const StadiumBorder(),
-          elevation: 20,
-          shadowColor: myColor,
-          minimumSize: const Size.fromHeight(60),
-        ),
-        child: const Text("LOGIN"),
+    return ElevatedButton(
+      onPressed: () {
+        loginUser();
+      },
+      style: ElevatedButton.styleFrom(
+        shape: const StadiumBorder(),
+        elevation: 20,
+        shadowColor: Colors.black,
+        minimumSize: const Size.fromHeight(60),
       ),
+      child: const Text("LOGIN"),
     );
   }
 
   Widget _buildOtherLogin() {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Row(
-        children: [
-          _buildGreyText("Don't have an account?"),
-          const SizedBox(height: 10),
-        ],
-      ),
-      TextButton(
-        onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => const SignUp()));
-        },
-        child: const Text(
-          "Sign Up",
-          style: TextStyle(
-              color: Color.fromARGB(255, 12, 131, 10),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text("Don't have an account?",
+            style: const TextStyle(color: Colors.grey)),
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SignUp()),
+            );
+          },
+          child: const Text(
+            "Sign Up",
+            style: TextStyle(
+              color: Colors.yellow,
               fontSize: 16,
-              fontWeight: FontWeight.w500),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ),
-      )
-    ]);
+      ],
+    );
   }
 }

@@ -13,6 +13,20 @@ class _OnlinePageState extends State<OnlinePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
+      appBar: AppBar(
+        title: Text('Online',
+            style: TextStyle(
+                color: Colors.amberAccent, fontWeight: FontWeight.w900)),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white,),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        backgroundColor: Color(0xff170746),
+      ),
+
       body: Column(
         children: [
           SizedBox(
