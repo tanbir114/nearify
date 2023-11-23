@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 
+// ignore: must_be_immutable
 class ShowQuestion extends StatefulWidget {
   ShowQuestion(this.qus,this.ans,{super.key});
 

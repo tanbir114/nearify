@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/user_model.dart';
+import 'package:frontend/rootpage.dart';
 
 final theme = ThemeData(
   // useMaterial3: true,
@@ -31,13 +32,19 @@ class _MyAppState extends State<MyApp> {
           ChangeNotifierProvider(
             create: (context) => DataProvider(),
           ),
+          ChangeNotifierProvider(
+            create: (context) => DataProvider2(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => DataProvider3(),
+          ),
         ],
         child: const MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Nearify',
           // theme: theme,
 
-          home: LoginPage(),
+          home: RootPage(),
         ));
   }
 }

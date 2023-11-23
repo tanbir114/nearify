@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print
 
-import 'package:camera/camera.dart';
 import 'package:frontend/CustomUI/OwnFileCard.dart';
 import 'package:frontend/CustomUI/OwnMessageCard.dart';
 import 'package:frontend/CustomUI/ReplyFileCard.dart';
@@ -26,6 +25,7 @@ class GroupScreen extends StatefulWidget {
       : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _GroupScreenState createState() => _GroupScreenState();
 }
 
@@ -34,10 +34,10 @@ class _GroupScreenState extends State<GroupScreen> {
   FocusNode focusNode = FocusNode();
   bool sendButton = false;
   List<MessageModel> messages = [];
-  TextEditingController _controller = TextEditingController();
-  ScrollController _scrollController = ScrollController();
+  final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   late IO.Socket socket;
-  ImagePicker _picker = ImagePicker();
+  final ImagePicker _picker = ImagePicker();
   XFile? file;
   var popTime = 0;
 
@@ -61,11 +61,14 @@ class _GroupScreenState extends State<GroupScreen> {
     var reqBody = {
       "groupId": widget.name,
     };
+
     var response = await http.post(Uri.parse(oldGroupMessage),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody));
+
     final Map<String, dynamic> data = jsonDecode(response.body);
     final List<dynamic> msgList = data['msg'];
+
     for (Map<String, dynamic> message in msgList) {
       String? type;
       String? messageContent = message['message'];
@@ -80,7 +83,7 @@ class _GroupScreenState extends State<GroupScreen> {
         type = "source";
         path = message['src_path'];
       }
-      // String?
+
       if (messageContent != null) {
         setMessage(type, messageContent, time, path, senderName);
         _scrollController.animateTo(_scrollController.position.maxScrollExtent,
@@ -94,17 +97,22 @@ class _GroupScreenState extends State<GroupScreen> {
       "transports": ["websocket"],
       "autoConnect": false,
     });
-    // ignore: avoid_print
-    socket.onDisconnect((_) => print('Disconnected'));
+
     socket.connect();
+
+    socket.onDisconnect((_) => print('Disconnected'));
+
     socket.onConnect((data) {
       socket.emit("joinGroup", widget.name);
+
       socket.on("grpmessage", (msg) {
         var time = DateTime.now().toString().substring(10, 16);
+
         if (msg["sourceId"] != userId) {
           setMessage("destination", msg["message"], time, msg["path"],
               msg["senderName"]);
         }
+
         if (_scrollController.positions.isNotEmpty &&
             _scrollController.position.extentAfter == 0.0) {
           _scrollController.animateTo(
@@ -141,7 +149,7 @@ class _GroupScreenState extends State<GroupScreen> {
     await http.post(Uri.parse(sentGroupMessage),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody));
-    // var jsonResponse = jsonDecode(response.body);
+
   }
 
   void onImageSend(String path, String message) async {

@@ -69,8 +69,10 @@ class _IndividualPageState extends State<IndividualPage> {
     var response = await http.post(Uri.parse(oldMessage),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody));
+
     final Map<String, dynamic> data = jsonDecode(response.body);
-    final List<dynamic> msgList = data['msg']['messages'];
+    final List<dynamic> msgList = data["msg"];
+
     for (Map<String, dynamic> message in msgList) {
       final String? type = message['type'];
       String? messageContent = message['message'];
@@ -85,7 +87,7 @@ class _IndividualPageState extends State<IndividualPage> {
   }
 
   void connect() {
-    socket = IO.io("${url}", <String, dynamic>{
+    socket = IO.io(url, <String, dynamic>{
       "transports": ["websocket"],
       "autoConnect": false,
     });
@@ -131,7 +133,19 @@ class _IndividualPageState extends State<IndividualPage> {
     await http.post(Uri.parse(sentMessage),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody));
-    // var jsonResponse = jsonDecode(response.body);
+
+    reqBody = {
+      "sourceId": sourceId,
+      "targetId": targetId,
+      "userName": userName,
+      "friendName": widget.name
+    };
+
+    await http.post(Uri.parse(addPeopleYouMayKnownProple),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(reqBody));
+
+        
   }
 
   void onImageSend(String path, String message) async {
@@ -176,8 +190,8 @@ class _IndividualPageState extends State<IndividualPage> {
   }
 
   void setMessage(String type, String message, time, path) async {
-    MessageModel messageModel =
-        MessageModel(type: type, message: message, time: time, path: path);
+    MessageModel messageModel = MessageModel(
+        type: type, message: message, time: time, path: path, name: "");
 
     setState(() {
       messages.insert(0, messageModel);
@@ -483,8 +497,8 @@ class _IndividualPageState extends State<IndividualPage> {
                                             duration: const Duration(
                                                 milliseconds: 300),
                                             curve: Curves.easeOut);
-                                        sendMessage(_controller.text,
-                                            "{$userId}", widget.id, "");
+                                        sendMessage(_controller.text, "$userId",
+                                            widget.id, "");
                                         _controller.clear();
                                         setState(() {
                                           sendButton = false;

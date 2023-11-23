@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/add_friend.dart';
+import 'package:frontend/anotherhomepage.dart';
+import 'package:frontend/chat_page.dart';
 import 'package:frontend/user_model.dart';
 import 'notifications.dart';
-import 'notification_model.dart';
-import 'message_model.dart';
-// import 'frontpage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'current_location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'config.dart';
-import 'userProfile.dart';
-import 'package:frontend/categorychatscreen.dart';
-// import 'package:frontend/user_model.dart';
 import 'package:provider/provider.dart';
 
 class Homepage extends StatefulWidget {
@@ -21,7 +18,8 @@ class Homepage extends StatefulWidget {
     this.userEmail,
     this.userPhone,
     this.userPassword,
-    this.userId, {
+    this.userId,
+    this.tags, {
     Key? key,
   }) : super(key: key);
 
@@ -30,6 +28,7 @@ class Homepage extends StatefulWidget {
   final String? userPhone;
   final String? userPassword;
   final String? userId;
+  final List<dynamic>? tags;
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -44,16 +43,10 @@ class _HomepageState extends State<Homepage> {
   Map<String, dynamic> updatedjsonDataMap = {};
 
   var tabs = [
-    CategoryChatScreen(),
-    Notifications(
-      'Notifications',
-      notification_model.notification_list,
-      message_model.message_list,
-    ),
-    const Center(
-      child: Text('Saved'),
-    ),
-    UserProfile(),
+    const AnotherHomePage(),
+    Notifications(),
+    AddFriend(),
+    const ChatPage(),
   ];
 
   @override
@@ -65,23 +58,16 @@ class _HomepageState extends State<Homepage> {
     userEmail = widget.userEmail;
     userPassword = widget.userPassword;
     userId = widget.userId;
+    tags = widget.tags;
 
-    timer = Timer.periodic(const Duration(seconds: 5), (Timer t) async {
+    timer = Timer.periodic(const Duration(seconds: 10), (Timer t) async {
       Position position = await CurrentLocation();
-      // print(position.latitude);
-      // print(position.longitude);
 
       var regBody = {
         "email": widget.userEmail!,
         "latitude": position.latitude,
         "longitude": position.longitude,
       };
-      
-      await http.post(
-        Uri.parse(location),
-        headers: {"Content-type": "application/json"},
-        body: jsonEncode(regBody),
-      );
 
       final response = await http.post(
         Uri.parse(nearbyusers),
@@ -90,12 +76,41 @@ class _HomepageState extends State<Homepage> {
       );
 
       updatedjsonDataMap = json.decode(response.body);
+      // ignore: use_build_context_synchronously
       context
           .read<DataProvider>()
           .changeJsonDataMap(newjsonDataMap: updatedjsonDataMap);
 
-      // print(response.body);
-      // print('Timer ticked');
+      await http.post(
+        Uri.parse(location),
+        headers: {"Content-type": "application/json"},
+        body: jsonEncode(regBody),
+      );
+
+      regBody = {
+        "sourceId": userId!,
+      };
+
+      var response1 = await http.post(
+        Uri.parse(PeopleYouMayKnow),
+        headers: {"Content-type": "application/json"},
+        body: jsonEncode(regBody),
+      );
+      var updatedPeopleYouMayKnow = json.decode(response1.body);
+      context
+          .read<DataProvider2>()
+          .changeJsonDataMap(new_people_you_may_know: updatedPeopleYouMayKnow);
+
+      response1 = await http.post(
+        Uri.parse(findFriend),
+        headers: {"Content-type": "application/json"},
+        body: jsonEncode(regBody),
+      );
+
+      var updatedFriends = json.decode(response1.body);
+      context
+          .read<DataProvider3>()
+          .changeJsonData(newFriends: updatedFriends?['friends'] ?? []);
     });
   }
 
@@ -109,7 +124,7 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Color(0xFFF9F9F9),
+        backgroundColor: const Color(0xFFF9F9F9),
         body: tabs[_currentIndex], // Pass jsonDataMap here
         bottomNavigationBar: SizedBox(
           height: 72,
@@ -120,33 +135,35 @@ class _HomepageState extends State<Homepage> {
               size: 24,
             ),
             selectedIconTheme: const IconThemeData(size: 30),
-            backgroundColor: const Color(0xFFFFFFFF),
+            unselectedItemColor: Colors.white, // Set unselected icon color
+            selectedItemColor: Colors.amber,
+            backgroundColor: const Color(0xff170746),
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
                 label: 'Home',
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.white,
               ),
               BottomNavigationBarItem(
                 icon: Icon(
                   Icons.notifications_rounded,
                 ),
                 label: 'Notification',
-                backgroundColor: Colors.blue,
+                backgroundColor: Colors.white,
               ),
               BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.favorite,
+                  Icons.person_add,
                 ),
-                label: 'Saved',
-                backgroundColor: Colors.blue,
+                label: 'AddFriend',
+                backgroundColor: Colors.white,
               ),
               BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.person_rounded,
+                  Icons.chat_bubble,
                 ),
-                label: 'Profile',
-                backgroundColor: Colors.blue,
+                label: 'Chat',
+                backgroundColor: Colors.white,
               ),
             ],
             onTap: (index) {

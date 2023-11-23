@@ -21,7 +21,10 @@ class _UserProfile extends State<UserProfile> {
         //backgroundColor: Color.fromARGB(255, 240, 222, 169),
         appBar: AppBar(
           leading: IconButton(
-              onPressed: () {}, icon: const Icon(LineAwesomeIcons.angle_left)),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(LineAwesomeIcons.angle_left)),
           title: Text("Profile",
               style: Theme.of(context).textTheme.headlineMedium),
           actions: [
@@ -105,7 +108,8 @@ class _UserProfile extends State<UserProfile> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => CategoryScreen(userEmail: userEmail)),
+                              builder: (context) =>
+                                  CategoryScreen(userEmail: userEmail)),
                         );
                       }),
                   ProfileMenuWidget(

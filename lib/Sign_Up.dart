@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'config.dart';
 import 'login_page.dart';
-import 'homepage.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:frontend/current_location.dart';
 
@@ -25,6 +24,7 @@ class _SignUpState extends State<SignUp> {
   bool _isNotValidatepassword = false;
   bool _isNotValidatephone = false;
   bool _isNotValidateusername = false;
+  bool rememberUser = false;
 
   late Size mediaS;
 
@@ -39,6 +39,7 @@ class _SignUpState extends State<SignUp> {
   }
 
   void registerUser() async {
+    print("why??????");
     if (usernameController.text.isEmpty) {
       print(_isNotValidateusername);
       setState(() {
@@ -83,8 +84,8 @@ class _SignUpState extends State<SignUp> {
         !_isNotValidateusername) {
       Position position = await CurrentLocation();
 
-      // print(position.latitude);
-      // print(position.longitude);
+      print(position.latitude);
+      print(position.longitude);
 
       var regBody = {
         "name": usernameController.text,
@@ -103,12 +104,13 @@ class _SignUpState extends State<SignUp> {
       if (jsonResponse['status']) {
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => LoginPage()),
+            MaterialPageRoute(builder: (context) => const LoginPage()),
             (route) => false);
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => CategoryScreen(userEmail: emailController.text)));
+                builder: (context) =>
+                    CategoryScreen(userEmail: emailController.text)));
       } else {
         print("Something went wrong");
       }
@@ -118,32 +120,21 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     mediaS = MediaQuery.of(context).size;
+    // bool checkboxval = false;
 
     return Container(
       decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/images/Last.png"),
-          fit: BoxFit.cover,
-        ),
+        color: Color(0xff170746),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Stack(
           children: [
             Container(),
-            Container(
-              padding: const EdgeInsets.only(left: 100, top: 120),
-              child: const Text(
-                'Welcome',
-                style: TextStyle(color: Colors.white, fontSize: 35),
-              ),
-            ),
             SingleChildScrollView(
               child: Container(
-                padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.5),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  //crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       margin: const EdgeInsets.only(left: 35, right: 35),
@@ -152,20 +143,52 @@ class _SignUpState extends State<SignUp> {
                           const SizedBox(
                             height: 60,
                           ),
+                          Row(
+                            children: [
+                              Text(
+                                'Sign Up!',
+                                style: TextStyle(
+                                    fontSize: 48,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.white),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                'We know you dont have friends, let us\nhelp make you some',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w300,
+                                  color: Color(0xffC3C5FF),
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 50,
+                          ),
                           TextField(
                             controller: usernameController,
                             keyboardType: TextInputType.text,
                             style: const TextStyle(
                                 color: Colors.black,
-                                fontSize: 12,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold),
                             decoration: InputDecoration(
+                                contentPadding: EdgeInsets.only(
+                                    left: 24, top: 20, bottom: 20),
                                 fillColor: Colors.grey.shade100,
                                 filled: true,
                                 hintText: "Username",
-                                labelText: 'Username',
-                                labelStyle: const TextStyle(
-                                  fontSize: 15,
+                                //labelText: 'Username',
+                                hintStyle: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
                                 ),
                                 errorText: _isNotValidateusername
                                     ? "Enter Proper Info"
@@ -174,116 +197,149 @@ class _SignUpState extends State<SignUp> {
                                     color: Color.fromARGB(255, 219, 34, 21),
                                     fontWeight: FontWeight.bold),
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: BorderSide.none,
                                 )),
                           ),
                           const SizedBox(
-                            height: 15,
+                            height: 18,
                           ),
                           TextField(
                             controller: emailController,
                             keyboardType: TextInputType.emailAddress,
                             style: const TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.bold),
-                            // obscureText: true,
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
                             decoration: InputDecoration(
+                                contentPadding: EdgeInsets.only(
+                                    left: 24, top: 20, bottom: 20),
                                 fillColor: Colors.grey.shade100,
                                 filled: true,
-                                labelText: 'Email Address',
-                                labelStyle: const TextStyle(
-                                  fontSize: 15,
+                                hintText: "Email Address",
+                                hintStyle: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
                                 ),
-                                errorText: _isNotValidateemail
+                                errorText: _isNotValidateusername
                                     ? "Enter Proper Info"
                                     : null,
                                 errorStyle: const TextStyle(
                                     color: Color.fromARGB(255, 219, 34, 21),
                                     fontWeight: FontWeight.bold),
-                                hintText: "Email",
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: BorderSide.none,
                                 )),
                           ),
                           const SizedBox(
-                            height: 15,
+                            height: 18,
                           ),
                           TextField(
                             controller: phoneController,
                             keyboardType: TextInputType.phone,
                             style: const TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.bold),
-                            // obscureText: true,
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
                             decoration: InputDecoration(
+                                contentPadding: EdgeInsets.only(
+                                    left: 24, top: 20, bottom: 20),
                                 fillColor: Colors.grey.shade100,
                                 filled: true,
-                                labelText: 'Mobile Number',
-                                labelStyle: const TextStyle(
-                                  fontSize: 15,
+                                hintText: "Phone Number",
+                                //labelText: 'Username',
+                                hintStyle: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
                                 ),
-                                hintText: "Mobile Number",
-                                errorText: _isNotValidatephone
+                                errorText: _isNotValidateusername
                                     ? "Enter Proper Info"
                                     : null,
                                 errorStyle: const TextStyle(
                                     color: Color.fromARGB(255, 219, 34, 21),
                                     fontWeight: FontWeight.bold),
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: BorderSide.none,
                                 )),
                           ),
                           const SizedBox(
-                            height: 15,
+                            height: 18,
                           ),
                           TextField(
                             controller: passwordController,
                             keyboardType: TextInputType.visiblePassword,
                             style: const TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.bold),
-                            obscureText: true,
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
                             decoration: InputDecoration(
+                                contentPadding: EdgeInsets.only(
+                                    left: 24, top: 20, bottom: 20),
                                 fillColor: Colors.grey.shade100,
                                 filled: true,
-                                labelText: 'Password',
-                                labelStyle: const TextStyle(
-                                  fontSize: 15,
+                                hintText: "Password (min 6 characters)",
+                                hintStyle: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
                                 ),
-                                errorText: _isNotValidatepassword
+                                errorText: _isNotValidateusername
                                     ? "Enter Proper Info"
                                     : null,
                                 errorStyle: const TextStyle(
                                     color: Color.fromARGB(255, 219, 34, 21),
                                     fontWeight: FontWeight.bold),
-                                hintText:
-                                    'Enter your password (min. 6 characters)',
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: BorderSide.none,
                                 )),
                           ),
                           const SizedBox(
-                            height: 15,
+                            height: 18,
+                          ),
+                          Row(
+                            children: [
+                              Checkbox(
+                                value: rememberUser,
+                                onChanged: (value) {
+                                  setState(() {
+                                    rememberUser = value!;
+                                  });
+                                },
+                              ),
+                              const Text(
+                                "I promise that I won't kidnap anyone",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w300),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.08,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
-                                'Sign Up',
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 71, 152, 60),
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              CircleAvatar(
-                                radius: 20,
-                                backgroundColor: Color(0xff4c505b),
-                                child: IconButton(
-                                    color: Colors.white,
+                              SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.8 ,
+                                height: 60,
+                                child: ElevatedButton(
                                     onPressed: () {
                                       registerUser();
                                     },
-                                    icon: const Icon(
-                                      Icons.arrow_forward,
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Register',
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.black),
                                     )),
-                              )
+                              ),
                             ],
                           ),
                         ],

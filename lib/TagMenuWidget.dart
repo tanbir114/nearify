@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/UpdateProfileScreen.dart';
+// import 'package:frontend/UpdateProfileScreen.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class TagMenuWidget extends StatelessWidget {
