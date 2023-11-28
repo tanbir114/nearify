@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:frontend/config.dart';
 import 'package:flutter/material.dart';
 
@@ -29,20 +28,25 @@ class ReplyFileCard extends StatelessWidget {
               maxWidth: MediaQuery.of(context).size.width / 1.8,
             ),
             child: Card(
+              color: const Color.fromARGB(255, 249, 222, 126),
               margin: const EdgeInsets.all(3),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
+                side: const BorderSide(
+                  color: Color.fromARGB(255, 249, 222, 126),
+                  width: 4.0,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(15),
                       topRight: Radius.circular(15),
                     ),
                     child: Image.network(
-                      "${url}/uploads/$path",
+                      "$url/uploads/$path",
                       fit: BoxFit.cover,
                       width: double.infinity,
                       height: MediaQuery.of(context).size.height / 4,
@@ -53,7 +57,7 @@ class ReplyFileCard extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         message,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           color: Colors.black,
                         ),
@@ -63,9 +67,9 @@ class ReplyFileCard extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 8, bottom: 8),
                     child: Text(
                       time,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
+                      style: const TextStyle(
+                        fontSize: 8,
+                        color: Colors.black,
                       ),
                     ),
                   ),
@@ -83,11 +87,11 @@ class ReplyFileCard extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          child: Container(
+          child: SizedBox(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height / 1.5,
             child: Image.network(
-              "${url}/uploads/$path",
+              "$url/uploads/$path",
               fit: BoxFit.cover,
             ),
           ),

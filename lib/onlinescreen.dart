@@ -38,18 +38,20 @@ class _OnlineScreenState extends State<OnlineScreen> {
         .toList();
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Online Peoples',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.amberAccent
-          ),
+        title: Text(
+          'Connect with $desiredTag',
+          style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.amberAccent),
         ),
-        backgroundColor:
-            const Color(0xff170746), // Change the color according to your preference
+        backgroundColor: const Color(
+            0xff170746), // Change the color according to your preference
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white,),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -57,16 +59,8 @@ class _OnlineScreenState extends State<OnlineScreen> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Connect with $desiredTag',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
+          const SizedBox(
+            height: 25,
           ),
           Expanded(
             child: GridView(

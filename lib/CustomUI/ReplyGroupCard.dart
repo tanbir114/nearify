@@ -22,6 +22,7 @@ class ReplyGroupCard extends StatelessWidget {
           maxWidth: MediaQuery.of(context).size.width - 45,
         ),
         child: Card(
+          color: Color.fromARGB(255, 249, 222, 126),
           elevation: 1,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           // color: Color(0xffdcf8c6),
@@ -35,7 +36,7 @@ class ReplyGroupCard extends StatelessWidget {
                   senderName,
                   style: const TextStyle(
                     fontSize: 13,
-                    color: Colors.blue,
+                    color: Color(0xff170746),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -62,8 +63,8 @@ class ReplyGroupCard extends StatelessWidget {
                     child: Text(
                       time,
                       style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[600],
+                        fontSize: 8,
+                        color: Colors.black,
                       ),
                     ),
                   ),

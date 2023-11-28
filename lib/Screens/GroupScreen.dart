@@ -6,6 +6,7 @@ import 'package:frontend/CustomUI/ReplyFileCard.dart';
 import 'package:frontend/CustomUI/ReplyGroupCard.dart';
 import 'package:frontend/Screens/CameraScreen.dart';
 import 'package:frontend/Screens/CameraView.dart';
+import 'package:frontend/constants.dart';
 import 'package:frontend/models/MessageModel.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
@@ -219,7 +220,7 @@ class _GroupScreenState extends State<GroupScreen> {
     return Stack(
       children: [
         Image.asset(
-          "assets/whatsapp_background.png",
+          "assets/images/moonbg.jpg",
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,
@@ -229,6 +230,7 @@ class _GroupScreenState extends State<GroupScreen> {
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(60),
             child: AppBar(
+               backgroundColor: const Color(0xff170746),
               leadingWidth: 70,
               titleSpacing: 0,
               leading: InkWell(
@@ -241,15 +243,16 @@ class _GroupScreenState extends State<GroupScreen> {
                     const Icon(
                       Icons.arrow_back,
                       size: 24,
+                      color: Colors.white,
                     ),
                     CircleAvatar(
                       radius: 20,
                       backgroundColor: Colors.blueGrey,
-                      child: SvgPicture.asset(
+                      child: Image.asset(
                         // widget.chatModel.isGroup!
                         // ? "assets/groups.svg"
                         // :
-                        "assets/person.svg",
+                        "assets/images/man.png",
                         // color: Colors.white,
                         height: 36,
                         width: 36,
@@ -271,6 +274,7 @@ class _GroupScreenState extends State<GroupScreen> {
                         style: const TextStyle(
                           fontSize: 18.5,
                           fontWeight: FontWeight.bold,
+                          color: Colors.amberAccent
                         ),
                       ),
                       Row(
@@ -288,6 +292,7 @@ class _GroupScreenState extends State<GroupScreen> {
                             "Online",
                             style: TextStyle(
                               fontSize: 13,
+                              color: Colors.white
                             ),
                           ),
                         ],
@@ -297,9 +302,11 @@ class _GroupScreenState extends State<GroupScreen> {
                 ),
               ),
               actions: [
-                IconButton(icon: const Icon(Icons.videocam), onPressed: () {}),
-                IconButton(icon: const Icon(Icons.call), onPressed: () {}),
+                IconButton(icon: const Icon(Icons.videocam, color: Colors.amberAccent,), onPressed: () {}),
+                IconButton(icon: const Icon(Icons.call, color: Colors.amberAccent,), onPressed: () {}),
                 PopupMenuButton<String>(
+                  surfaceTintColor: Colors.amberAccent,
+                  iconColor: Colors.amberAccent,
                   padding: const EdgeInsets.all(0),
                   onSelected: (value) {},
                   itemBuilder: (BuildContext contesxt) {
@@ -489,11 +496,11 @@ class _GroupScreenState extends State<GroupScreen> {
                                 ),
                                 child: CircleAvatar(
                                   radius: 25,
-                                  backgroundColor: const Color(0xFF128C7E),
+                                  backgroundColor: Color(0xff170746),
                                   child: IconButton(
                                     icon: Icon(
                                       sendButton ? Icons.send : Icons.mic,
-                                      color: Colors.white,
+                                      color: Colors.amberAccent,
                                     ),
                                     onPressed: () {
                                       if (sendButton) {

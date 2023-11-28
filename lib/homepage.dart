@@ -60,58 +60,64 @@ class _HomepageState extends State<Homepage> {
     userId = widget.userId;
     tags = widget.tags;
 
-    timer = Timer.periodic(const Duration(seconds: 10), (Timer t) async {
-      Position position = await CurrentLocation();
+    fetchData();
 
-      var regBody = {
-        "email": widget.userEmail!,
-        "latitude": position.latitude,
-        "longitude": position.longitude,
-      };
-
-      final response = await http.post(
-        Uri.parse(nearbyusers),
-        headers: {"Content-type": "application/json"},
-        body: jsonEncode(regBody),
-      );
-
-      updatedjsonDataMap = json.decode(response.body);
-      // ignore: use_build_context_synchronously
-      context
-          .read<DataProvider>()
-          .changeJsonDataMap(newjsonDataMap: updatedjsonDataMap);
-
-      await http.post(
-        Uri.parse(location),
-        headers: {"Content-type": "application/json"},
-        body: jsonEncode(regBody),
-      );
-
-      regBody = {
-        "sourceId": userId!,
-      };
-
-      var response1 = await http.post(
-        Uri.parse(PeopleYouMayKnow),
-        headers: {"Content-type": "application/json"},
-        body: jsonEncode(regBody),
-      );
-      var updatedPeopleYouMayKnow = json.decode(response1.body);
-      context
-          .read<DataProvider2>()
-          .changeJsonDataMap(new_people_you_may_know: updatedPeopleYouMayKnow);
-
-      response1 = await http.post(
-        Uri.parse(findFriend),
-        headers: {"Content-type": "application/json"},
-        body: jsonEncode(regBody),
-      );
-
-      var updatedFriends = json.decode(response1.body);
-      context
-          .read<DataProvider3>()
-          .changeJsonData(newFriends: updatedFriends?['friends'] ?? []);
+    timer = Timer.periodic(const Duration(seconds: 5), (Timer t) async {
+      fetchData();
     });
+  }
+
+  Future<void> fetchData() async {
+    // var regBody = {
+    //   "sourceId": userId!,
+    // };
+
+    // var response1 = await http.post(
+    //   Uri.parse(PeopleYouMayKnow),
+    //   headers: {"Content-type": "application/json"},
+    //   body: jsonEncode(regBody),
+    // );
+    // var updatedPeopleYouMayKnow = json.decode(response1.body);
+    // context
+    //     .read<DataProvider2>()
+    //     .changeJsonDataMap(new_people_you_may_know: updatedPeopleYouMayKnow);
+
+    // response1 = await http.post(
+    //   Uri.parse(findFriend),
+    //   headers: {"Content-type": "application/json"},
+    //   body: jsonEncode(regBody),
+    // );
+
+    // var updatedFriends = json.decode(response1.body);
+    // context
+    //     .read<DataProvider3>()
+    //     .changeJsonData(newFriends: updatedFriends?['friends'] ?? []);
+
+    Position position = await CurrentLocation();
+
+    var regBody1 = {
+      "email": widget.userEmail!,
+      "latitude": position.latitude,
+      "longitude": position.longitude,
+    };
+
+    final response = await http.post(
+      Uri.parse(nearbyusers),
+      headers: {"Content-type": "application/json"},
+      body: jsonEncode(regBody1),
+    );
+
+    updatedjsonDataMap = json.decode(response.body);
+    // ignore: use_build_context_synchronously
+    context
+        .read<DataProvider>()
+        .changeJsonDataMap(newjsonDataMap: updatedjsonDataMap);
+
+    await http.post(
+      Uri.parse(location),
+      headers: {"Content-type": "application/json"},
+      body: jsonEncode(regBody1),
+    );
   }
 
   @override

@@ -1,11 +1,13 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:frontend/config.dart';
 import 'package:frontend/user_model.dart';
 import 'package:provider/provider.dart';
 import 'widgets/onlinepeople.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ChatPage extends StatefulWidget {
-  // final String tagName;
-
   const ChatPage({Key? key}) : super(key: key);
 
   @override
@@ -13,10 +15,40 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  late Timer _timer;
   @override
   void initState() {
     super.initState();
-    // desiredTag = widget.tagName;
+    fetchData();
+    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+      fetchData();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  Future<void> fetchData() async {
+    try {
+      var regBody = {
+        "sourceId": userId!,
+      };
+      var response1 = await http.post(
+        Uri.parse(findFriend),
+        headers: {"Content-type": "application/json"},
+        body: jsonEncode(regBody),
+      );
+
+      var updatedFriends = json.decode(response1.body);
+      context
+          .read<DataProvider3>()
+          .changeJsonData(newFriends: updatedFriends?['friends'] ?? []);
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
   }
 
   @override

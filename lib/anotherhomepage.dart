@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/categorychatscreen.dart';
+import 'package:frontend/chat_page.dart';
 import 'package:frontend/data/dummy_data.dart';
-import 'package:frontend/data/dummy_data3.dart';
 import 'package:frontend/data/dummy_data4.dart';
-import 'package:frontend/models/interestcard.dart';
 import 'package:frontend/userProfile.dart';
 import 'package:frontend/user_model.dart';
 import 'package:frontend/widgets/interest.dart';
@@ -125,7 +124,13 @@ class _AnotherHomePageState extends State<AnotherHomePage> {
                             ),
                             const Spacer(), // Pushes the following widgets to the right
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ChatPage()),
+                                );
+                              },
                               icon: const Icon(Icons.arrow_forward),
                             )
                           ],
@@ -137,7 +142,7 @@ class _AnotherHomePageState extends State<AnotherHomePage> {
             Padding(
               padding: const EdgeInsets.all(8),
               child: Container(
-                height: 560,
+                height: MediaQuery.of(context).size.height * .72,
                 color: const Color.fromARGB(255, 238, 240, 241),
                 padding: const EdgeInsets.all(8),
                 child: Column(
@@ -156,7 +161,8 @@ class _AnotherHomePageState extends State<AnotherHomePage> {
                       height: 20,
                     ),
                     SizedBox(
-                      height: 435, // Adjust the height as needed
+                      height: MediaQuery.of(context).size.height *
+                          .56, // Adjust the height as needed
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: availableTopics.length,

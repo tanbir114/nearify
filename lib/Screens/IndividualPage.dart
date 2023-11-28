@@ -3,12 +3,12 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/gestures.dart';
 import 'package:frontend/CustomUI/OwnFileCard.dart';
-// import 'package:frontend/CustomUI/CameraUI.dart';
 import 'package:frontend/CustomUI/OwnMessageCard.dart';
 import 'package:frontend/CustomUI/ReplyCard.dart';
 import 'package:frontend/CustomUI/ReplyFileCard.dart';
 import 'package:frontend/Screens/CameraScreen.dart';
 import 'package:frontend/Screens/CameraView.dart';
+import 'package:frontend/constants.dart';
 import 'package:frontend/models/MessageModel.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
@@ -23,12 +23,8 @@ import 'package:image_picker/image_picker.dart';
 class IndividualPage extends StatefulWidget {
   final String id;
   final String name;
-  const IndividualPage({Key? key, required this.id, required this.name
-      // required this.chatModel, required this.sourchat
-      })
+  const IndividualPage({Key? key, required this.id, required this.name})
       : super(key: key);
-  // final ChatModel chatModel;
-  // final ChatModel sourchat;
 
   @override
   _IndividualPageState createState() => _IndividualPageState();
@@ -144,8 +140,6 @@ class _IndividualPageState extends State<IndividualPage> {
     await http.post(Uri.parse(addPeopleYouMayKnownProple),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(reqBody));
-
-        
   }
 
   void onImageSend(String path, String message) async {
@@ -212,9 +206,10 @@ class _IndividualPageState extends State<IndividualPage> {
     return Stack(
       children: [
         Image.asset(
-          "assets/whatsapp_background.png",
+          "assets/images/bg12.jpg",
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
+          
           fit: BoxFit.cover,
         ),
         Scaffold(
@@ -222,6 +217,7 @@ class _IndividualPageState extends State<IndividualPage> {
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(60),
             child: AppBar(
+              backgroundColor: const Color(0xff170746),
               leadingWidth: 70,
               titleSpacing: 0,
               leading: InkWell(
@@ -234,16 +230,13 @@ class _IndividualPageState extends State<IndividualPage> {
                     const Icon(
                       Icons.arrow_back,
                       size: 24,
+                      color: Colors.white,
                     ),
                     CircleAvatar(
                       radius: 20,
                       backgroundColor: Colors.blueGrey,
-                      child: SvgPicture.asset(
-                        // widget.chatModel.isGroup!
-                        // ? "assets/groups.svg"
-                        // :
-                        "assets/person.svg",
-                        // color: Colors.white,
+                      child: Image.asset(
+                        "assets/images/man.png",
                         height: 36,
                         width: 36,
                       ),
@@ -254,6 +247,7 @@ class _IndividualPageState extends State<IndividualPage> {
               title: InkWell(
                 onTap: () {},
                 child: Container(
+                  // color: Colors.amberAccent,
                   margin: const EdgeInsets.all(6),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -262,9 +256,9 @@ class _IndividualPageState extends State<IndividualPage> {
                       Text(
                         widget.name,
                         style: const TextStyle(
-                          fontSize: 18.5,
-                          fontWeight: FontWeight.bold,
-                        ),
+                            fontSize: 18.5,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.amberAccent),
                       ),
                       Row(
                         children: [
@@ -279,9 +273,7 @@ class _IndividualPageState extends State<IndividualPage> {
                           ),
                           const Text(
                             "Online",
-                            style: TextStyle(
-                              fontSize: 13,
-                            ),
+                            style: TextStyle(fontSize: 13, color: Colors.white),
                           ),
                         ],
                       )
@@ -290,9 +282,23 @@ class _IndividualPageState extends State<IndividualPage> {
                 ),
               ),
               actions: [
-                IconButton(icon: const Icon(Icons.videocam), onPressed: () {}),
-                IconButton(icon: const Icon(Icons.call), onPressed: () {}),
+                IconButton(
+                    icon: const Icon(
+                      Icons.videocam,
+                      color: Colors.amberAccent,
+                    ),
+                    onPressed: () {}),
+                IconButton(
+                    icon: const Icon(
+                      Icons.call,
+                      color: Colors.amberAccent,
+                    ),
+                    onPressed: () {}),
                 PopupMenuButton<String>(
+                  color: Colors.amberAccent,
+                  shadowColor: Colors.amberAccent,
+                  surfaceTintColor: Colors.amberAccent,
+                  iconColor: Colors.amberAccent,
                   padding: const EdgeInsets.all(0),
                   onSelected: (value) {},
                   itemBuilder: (BuildContext contesxt) {
@@ -483,17 +489,17 @@ class _IndividualPageState extends State<IndividualPage> {
                                 ),
                                 child: CircleAvatar(
                                   radius: 25,
-                                  backgroundColor: const Color(0xFF128C7E),
+                                  backgroundColor: const Color(0xff170746),
                                   child: IconButton(
                                     icon: Icon(
                                       sendButton ? Icons.send : Icons.mic,
-                                      color: Colors.white,
+                                      color: Colors.amberAccent,
                                     ),
                                     onPressed: () {
                                       if (sendButton) {
                                         _scrollController.animateTo(
                                             _scrollController
-                                                .position.maxScrollExtent,
+                                                .position.minScrollExtent,
                                             duration: const Duration(
                                                 milliseconds: 300),
                                             curve: Curves.easeOut);
